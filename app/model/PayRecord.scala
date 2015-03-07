@@ -15,7 +15,7 @@ import anorm.SqlParser._
 
 import scala.language.postfixOps
 
-case class PayRecord(paymentAmount:Double,balance:Double,paymentType:String,paymentGroup:String,month:Int,year:Int)
+case class PayRecord(paymentAmount:Double,balance:Double,paymentType:String,paymentGroup:String,paymentDate:DateTime)
 
 
 
@@ -26,10 +26,9 @@ object PayRecord{
       get[Double]("balance") ~
       get[String]("paymentType") ~
       get[String]("paymentGroup") ~
-      get[Int]("p_month") ~
-      get[Int]("p_year") map {
-      case paymentAmount ~ balance ~ paymentType~group~month~year =>
-        PayRecord(paymentAmount,balance,paymentType,group,month,year)
+      get[DateTime]("paymentDate") map {
+      case paymentAmount~balance~paymentType~group~paymentDate =>
+        PayRecord(paymentAmount,balance,paymentType,group,paymentDate)
     }
   }
 

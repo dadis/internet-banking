@@ -2,12 +2,11 @@
 
 CREATE TABLE payrecord(
     id SERIAL,
-    paymentAmount 	real 		NOT NULL,
-    balance  		real 		NOT NULL,
+    paymentAmount 	real 		    NOT NULL,
+    balance  		real 		    NOT NULL,
     paymentType 	varchar(255) 	NOT NULL,
     paymentGroup 	varchar(255) 	NOT NULL,
-    p_year 		bigint 		NOT NULL,
-    p_month 		bigint 		NOT NULL,
+    paymentDate 	date            NOT NULL,
     PRIMARY KEY (id)
     );
 

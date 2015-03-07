@@ -15,7 +15,7 @@ object IBParserService {
 
     val dtf:DateTimeFormatter = DateTimeFormat.forPattern("dd.MM.yyyy")
 
-    Source.fromFile(file, "ISO-8859-1").getLines.map(_.split(";")) map (array => new PayRecord(array(7).toDouble,array(10).toDouble,array(11),"default",dtf.parseDateTime(array(0)).getMonthOfYear,dtf.parseDateTime(array(0)).getYear)) toList //TODO repair year month
+    Source.fromFile(file, "ISO-8859-1").getLines.map(_.split(";")) map (array => new PayRecord(array(7).toDouble,array(10).toDouble,array(11),"default",dtf.parseDateTime(array(0)))) toList //TODO repair year month
 
   }
 

@@ -15,11 +15,12 @@ import sk.dadizzz.accounting.web.services.{PaymentType, IBParserService, MathSer
 case class Month(data: List[PayRecord]) {
 
 
-  def toDbData = data.map(p => Seq[ParameterValue](p.paymentAmount, p.balance, p.paymentType, p.paymentGroup, p.month, p.year))
+  def toDbData = data.map(p => Seq[ParameterValue](p.paymentAmount, p.balance, p.paymentType, p.paymentGroup, p.paymentDate))
 
-  val name = Month.getMonthName(data(0).month)
-  val month = data(0).month
-  val year = data(0).year
+
+  val month = data(0).paymentDate.getMonthOfYear
+  val year = data(0).paymentDate.getYear
+  val name = getMonthName
 
   val previousMonth = {
 
@@ -69,39 +70,9 @@ case class Month(data: List[PayRecord]) {
     MathService.roundDoubleTo2Decimal(number)
   }
 
+  def getMonthName: String = {
 
-
-}
-
-object Month {
-  def findAllForMonth(month: Int, year: Int): Month = {
-    DB.withConnection {
-      implicit c =>
-        val data = SQL("Select * from PayRecord WHERE p_month={month} AND p_year={year}").on("month" -> month, "year" -> year).as(PayRecord.mappingPayRecord *)
-        new Month(data)
-    }
-  }
-
-  def findAll: List[Month] = {
-
-    DB.withConnection {
-      implicit c =>
-       val all = SQL("Select * from PayRecord ORDER by p_month,p_year").as(PayRecord.mappingPayRecord *)
-
-       all.groupBy(r => r.month+"-"+r.year).map(m => Month(m._2)).toList.sortBy(m=>(m.year,m.month))
-         //.sortWith(_.month < _.month)
-
-
-    }
-  }
-
-
-
-
-
-  def getMonthName(i: Int): String = {
-
-    i match {
+    month match {
       case 1 => "January"
       case 2 => "February"
       case 3 => "March"
@@ -117,21 +88,57 @@ object Month {
     }
   }
 
+}
+
+object Month {
+  def findAllForMonth(month: Double, year: Double): Month = {
+    DB.withConnection {
+      implicit c =>
+        val data = SQL("select * from logrecord where" +
+          "extract(MONTH from paymentDate)={month}" +
+          "extract(YEAR from paymentDate)={year}").on("month" -> month, "year" -> year).as(PayRecord.mappingPayRecord *)
+        new Month(data)
+    }
+  }
+
+  def findAll: List[Month] = {
+
+    DB.withConnection {
+      implicit c =>
+       val all = SQL("Select * from PayRecord ORDER by paymentDate").as(PayRecord.mappingPayRecord *)
+
+       all.groupBy(r => r.paymentDate).map(m => Month(m._2)).toList.sortBy(m=>(m.year,m.month))
+         //.sortWith(_.month < _.month)
+
+
+    }
+  }
+
+
+
+
+
+
+
   def saveMonth(m: Month) = {
     DB.withConnection {
       implicit connection =>
-        SQL("insert into PayRecord(paymentAmount,balance,paymentType,paymentGroup,p_month,p_year)" +
-          "values({paymentAmount},{balance},{paymentType},{paymentGroup},{p_month},{p_year})")
+        SQL("insert into PayRecord(paymentAmount,balance,paymentType,paymentGroup,paymentDate)" +
+          "select {paymentAmount},{balance},{paymentType},{paymentGroup},{paymentDate}" +
+          "where not exists (" +
+          "select * from PayRecord " +
+          "where paymentAmount = cast({paymentAmount} as text) and balance = cast({balance} as text) and paymentType={paymentType} and paymentGroup={paymentGroup} and paymentDate={paymentDate}" +
+          ")")
           .asBatch
           .addBatchParamsList(m.toDbData).execute()
     }
   }
 
-  type monthYear = (Int, Int)
+  type monthYear = (Double, Double)
 
   val monthYear = {
-    get[Int]("p_month") ~
-      get[Int]("p_year") map {
+    get[Double]("p_month") ~
+      get[Double]("p_year") map {
       case month ~ year =>
         (month, year)
     }
@@ -140,7 +147,7 @@ object Month {
   def getListOfMonths(): List[monthYear] = {
     DB.withConnection {
       implicit c =>
-        SQL("SELECT DISTINCT  p_month, p_year FROM payrecord").as(monthYear *)
+        SQL("SELECT DISTINCT  extract(MONTH from paymentDate) as p_month, extract(YEAR from paymentDate) as p_year FROM payrecord").as(monthYear *)
     }
   }
 
@@ -148,7 +155,7 @@ object Month {
 
     DB.withConnection {
       implicit c =>
-        val res = SQL("Select p_month,p_year from PayRecord ORDER by p_month,p_year Limit 1").as(monthYear *)
+        val res = SQL("Select extract(MONTH from paymentDate) as p_month, extract(YEAR from paymentDate) as p_year from PayRecord ORDER by p_month,p_year Limit 1").as(monthYear *)
 
     res.head
 
