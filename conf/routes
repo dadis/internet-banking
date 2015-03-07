@@ -1,0 +1,19 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+# Home page
+GET     /                                sk.dadizzz.accounting.web.controllers.Application.index
+GET     /category                        sk.dadizzz.accounting.web.controllers.Application.category
+GET     /saved                           sk.dadizzz.accounting.web.controllers.Application.saved
+GET     /upload                          sk.dadizzz.accounting.web.controllers.Application.uploadForm
+POST    /upload                          sk.dadizzz.accounting.web.controllers.Application.upload
+
+GET     /all                             sk.dadizzz.accounting.web.controllers.Application.seeAll
+GET     /month                           sk.dadizzz.accounting.web.controllers.Application.seeMonth(month:Int=0,year:Int=0)
+GET     /month/:year/:month              sk.dadizzz.accounting.web.controllers.Application.seeMonth(month:Int,year:Int)
+GET     /log                             sk.dadizzz.accounting.web.controllers.Application.log
+GET     /balance/monthly                 sk.dadizzz.accounting.web.controllers.Application.balanceAsJson
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

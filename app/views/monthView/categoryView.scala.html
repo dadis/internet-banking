@@ -1,0 +1,54 @@
+@import sk.dadizzz.accounting.web.models.Month
+
+@(m: Month)
+
+@main("Welcome to Play") {
+
+<script>
+   $(document).ready(function() {
+    $('#tableA').DataTable();
+} );
+
+</script>
+
+<h1>@m.name</h1>
+
+<table id="tableA" class='display'>
+    <thead>
+    <tr>
+        <th>Amount</th>
+        <th>Type</th>
+    </tr>
+    </thead>
+
+
+    <tbody>
+    @for(record <- m.atmGroup) {
+    <tr>
+        <td>@record.paymentAmount</td>
+        <td>@record.paymentType</td>
+    </tr>
+    }
+
+
+    @for(record <- m.cardGroup) {
+    <tr>
+        <td>@record.paymentAmount</td>
+        <td>@record.paymentType</td>
+    </tr>
+    }
+
+
+    @for(record <- m.othersGroup) {
+    <tr>
+        <td>@record.paymentAmount</td>
+        <td>@record.paymentType</td>
+    </tr>
+    }
+
+    </tbody>
+
+</table>
+
+
+}

@@ -1,0 +1,152 @@
+@import sk.dadizzz.accounting.web.models.Month
+@import sk.dadizzz.accounting.web.models.Month.monthYear
+
+@(month:Month)
+
+@main("Welcome to Play") {
+
+
+
+
+
+<nav>
+    <ul class="pager">
+        <li class="previous"><a href="/month/@month.previousMonth._2/@month.previousMonth._1"><span aria-hidden="true">&larr;</span> Older</a></li>
+        <li class="next"><a href="/month/@month.nextMonth._2/@month.nextMonth._1">Newer <span aria-hidden="true">&rarr;</span></a></li>
+    </ul>
+</nav>
+
+
+
+<div class="row row-buffer">
+    <div class="col-md-4 ">
+        <canvas id="canvas" ></canvas>
+    </div>
+
+    <div class="col-md-4 ">
+       <p></p>
+    </div>
+
+
+
+    <div class="col-md-4">
+        <table id="tableA" class='display'>
+            <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Type</th>
+            </tr>
+            </thead>
+
+
+            <tbody>
+
+            <tr>
+                <td>@month.totalDebet</td>
+                <td>Total debet</td>
+            </tr>
+
+            <tr>
+                <td>@month.totalCredit</td>
+                <td>Total credit</td>
+            </tr>
+
+            <tr>
+                <td>@month.totalSaved</td>
+                <td>Total saved</td>
+            </tr>
+
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+<div class="row row-buffer">
+    <div>
+        <table id="tableB" class="display">
+            <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Balance</th>
+                <th>Group</th>
+                <th>Type</th>
+                <th>Month</th>
+                <th>Year</th>
+            </tr>
+            </thead>
+
+
+            <tbody>
+
+            @for(record <- month.data) {
+            <tr>
+                <td>@record.paymentAmount</td>
+                <td>@record.balance</td>
+                <td>@record.paymentGroup</td>
+                <td>@record.paymentType</td>
+                <td>@record.month</td>
+                <td>@record.year</td>
+            </tr>
+            }
+            </tbody>
+
+        </table>
+        }
+
+    </div>
+</div>
+
+<script>
+   $(document).ready(function() {
+    $('#tableA').DataTable(
+        {
+            "paging":   false,
+            "ordering": false,
+            "info":     false,
+            "searching":   false
+        }
+    );
+
+    $('#tableB').DataTable();
+
+} );
+
+</script>
+<script>
+		$.get("/balance/monthly",function(balance){
+
+            graph(balance);
+
+        });
+
+
+        function graph(balance){
+            var lineChartData = {
+                labels : ["July","August","September","October","November","December","Januar"],
+                datasets : [
+                    {
+                        label: "My First dataset",
+                        fillColor : "rgba(220,220,220,0.2)",
+                        strokeColor : "rgba(220,220,220,1)",
+                        pointColor : "rgba(220,220,220,1)",
+                        pointStrokeColor : "#fff",
+                        pointHighlightFill : "#fff",
+                        pointHighlightStroke : "rgba(220,220,220,1)",
+                        data : balance
+                    },
+                ]
+
+            }
+
+            var ctx = document.getElementById("canvas").getContext("2d");
+            window.myLine = new Chart(ctx).Line(lineChartData, {
+                responsive: true
+            });
+
+	    }
+
+
+
+	</script>

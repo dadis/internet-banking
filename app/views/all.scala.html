@@ -1,0 +1,75 @@
+@import sk.dadizzz.accounting.web.models.Month
+
+@(months:List[Month])
+
+@main("Welcome to Play") {
+
+<script>
+   $(document).ready(function() {
+    $('#tableA').DataTable();
+} );
+
+</script>
+
+
+<div class="row">
+<div class="col-md-12">
+
+    <table id="tableA" class="display">
+        <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Balance</th>
+            <th>Group</th>
+            <th>Type</th>
+            <th>Month</th>
+            <th>Year</th>
+        </tr>
+        </thead>
+
+
+        <tbody>
+
+        @for(month <- months){
+        @for(record <- month.data) {
+        <tr>
+            <td>@record.paymentAmount</td>
+            <td>@record.balance</td>
+            <td>@record.paymentGroup</td>
+            <td>@record.paymentType</td>
+            <td>@record.month</td>
+            <td>@record.year</td>
+        </tr>
+        }
+        }
+        </tbody>
+    </table>
+    }
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            @for(m<-months){
+             <a href="month/@m.year/@m.month">@m.name</a>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+
+            <canvas id="canvas" ></canvas>
+
+
+        </div>
+        <div class="col-md-4">
+
+            <p>Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
+                Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
+                Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsumLorem ipsum Lorem ipsumLorem ipsum Lorem ipsum
+            </p>
+
+        </div>
+    </div>
+
+
+

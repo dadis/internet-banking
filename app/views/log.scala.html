@@ -1,0 +1,41 @@
+@import sk.dadizzz.accounting.web.models.LogRecord
+
+@(logRecords:Seq[LogRecord])
+
+@main("Welcome to Play") {
+
+<script>
+   $(document).ready(function() {
+    $('#tableA').DataTable();
+} );
+
+</script>
+
+
+
+<table id="tableA" class="display">
+    <thead>
+    <tr>
+        <th>File name</th>
+        <th>Number of records</th>
+        <th>Status</th>
+        <th>Upload date</th>
+    </tr>
+    </thead>
+
+
+    <tbody>
+
+    @for(record <- logRecords) {
+    <tr>
+        <td>@record.fileName</td>
+        <td>@record.numberOfRecords</td>
+        <td>@record.status</td>
+        <td>@record.uploadDate</td>
+    </tr>
+    }
+    </tbody>
+
+</table>
+
+}

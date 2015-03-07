@@ -1,0 +1,18 @@
+@import sk.dadizzz.accounting.web.models.Month.monthYear
+
+@(months: List[monthYear])(implicit flash: Flash)
+
+
+
+@main("Welcome to Play") {
+
+@flash.get("success").getOrElse("Error")
+
+<ul>
+    @for(m <- months) {
+    <li>@m</li>
+    }
+</ul>
+
+
+}

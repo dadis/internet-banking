@@ -1,0 +1,48 @@
+@import sk.dadizzz.accounting.web.models.Month
+
+@(m: Month)
+
+@main("Welcome to Play") {
+
+<script>
+   $(document).ready(function() {
+    $('#tableA').DataTable();
+} );
+
+</script>
+
+<h1>@m.name</h1>
+
+<table id="tableA" class='display'>
+    <thead>
+    <tr>
+        <th>Amount</th>
+        <th>Type</th>
+    </tr>
+    </thead>
+
+
+    <tbody>
+
+    <tr>
+        <td>@m.totalDebet</td>
+        <td>Total debet</td>
+    </tr>
+
+    <tr>
+        <td>@m.totalCredit</td>
+        <td>Total credit</td>
+    </tr>
+
+    <tr>
+        <td>@m.totalSaved</td>
+        <td>Total saved</td>
+    </tr>
+
+
+    </tbody>
+
+</table>
+
+
+}

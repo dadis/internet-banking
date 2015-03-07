@@ -1,0 +1,59 @@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@title</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap/bootstrap.min.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css">
+
+    <!--JS-->
+    <script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.11.2.js"></script>
+    <script type="text/javascript" language="javascript" src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
+    <script src="@routes.Assets.at("javascripts/hello.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/bootstrap/bootstrap.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/chart.js/Chart.js")" type="text/javascript"></script>
+
+    <script type="text/javascript" class="init">
+    $(document).ready(function() {
+        $('#example').DataTable();
+    } );
+	</script>
+
+</head>
+    <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">SLSP advanced banking</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class=><a href="/upload">Uploading</a></li>
+                    <li><a href="/all">Statistics</a></li>
+                    <li><a href="/log">Logs</a></li>
+                    <li><a href="/month">Month</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <div class="container">
+    @content
+    </div>
+
+
+
+
+    </body>
+</html>

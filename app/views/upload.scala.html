@@ -1,0 +1,28 @@
+@import helper._
+@import sk.dadizzz.accounting.web.controllers.routes
+@()(implicit flash: Flash)
+
+
+
+@main(""){
+
+    @flash.get("success").getOrElse("Error")
+
+<div class="container">
+    @form(action = routes.Application.upload, 'enctype -> "multipart/form-data") {
+
+    <div class=".col-md-12">
+    <input type="file" name="month">
+
+    <p>
+        <input type="submit">
+    </p>
+
+    }
+    <div>
+
+
+
+    </div>
+
+}
