@@ -92,9 +92,14 @@ object Application extends Controller {
 
       val month=new Month(IBParserService.parseCSVtoList(file.ref.file))
 
-      Month.saveMonth(month)
+      var status = "OK";
+      try {
+        Month.saveMonth(month)
+      }catch{
+        case ex => status="ALREADYLOADED"
+      }
 
-      val logRecord = new LogRecord(month.name+""+month.year,month.data.size,"OK",new DateTime())
+      val logRecord = new LogRecord(month.name+""+month.year,month.data.size,status,new DateTime())
       logRecord.save()
 
       Redirect(routes.Application.index).flashing( "success" -> "File uploaded")

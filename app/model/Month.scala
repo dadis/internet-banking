@@ -4,6 +4,7 @@ import java.io.File
 
 import anorm.SqlParser._
 import anorm._
+import org.slf4j.Logger
 import play.api.db.DB
 import play.api.Play.current
 import sk.dadizzz.accounting.web.services.{PaymentType, IBParserService, MathService}
@@ -94,9 +95,9 @@ object Month {
   def findAllForMonth(month: Double, year: Double): Month = {
     DB.withConnection {
       implicit c =>
-        val data = SQL("select * from logrecord where" +
-          "extract(MONTH from paymentDate)={month}" +
-          "extract(YEAR from paymentDate)={year}").on("month" -> month, "year" -> year).as(PayRecord.mappingPayRecord *)
+        val data = SQL("select paymentAmount,balance,paymentType,paymentGroup,paymentDate from("+
+          "select *,extract(MONTH from paymentDate) as p_month, extract(YEAR from paymentDate) as p_year from payrecord"+
+          ")v where v.p_month=10 and v.p_year=2000").on("month" -> month, "year" -> year).as(PayRecord.mappingPayRecord *)
         new Month(data)
     }
   }
@@ -119,18 +120,20 @@ object Month {
 
 
 
-
+  @throws(classOf[Exception])
   def saveMonth(m: Month) = {
     DB.withConnection {
       implicit connection =>
-        SQL("insert into PayRecord(paymentAmount,balance,paymentType,paymentGroup,paymentDate)" +
-          "select {paymentAmount},{balance},{paymentType},{paymentGroup},{paymentDate}" +
-          "where not exists (" +
-          "select * from PayRecord " +
-          "where paymentAmount = cast({paymentAmount} as text) and balance = cast({balance} as text) and paymentType={paymentType} and paymentGroup={paymentGroup} and paymentDate={paymentDate}" +
-          ")")
-          .asBatch
-          .addBatchParamsList(m.toDbData).execute()
+        try{
+          SQL("insert into PayRecord(paymentAmount,balance,paymentType,paymentGroup,paymentDate) values({paymentAmount},{balance},{paymentType},{paymentGroup},{paymentDate})")
+            .asBatch
+            .addBatchParamsList(m.toDbData).execute()
+        } catch {
+          case e: Exception => {
+            throw e//TODO add loggign of exeception
+            None
+          }
+        }
     }
   }
 

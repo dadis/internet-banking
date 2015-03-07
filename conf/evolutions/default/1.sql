@@ -2,12 +2,13 @@
 
 CREATE TABLE payrecord(
     id SERIAL,
-    paymentAmount 	real 		    NOT NULL,
-    balance  		real 		    NOT NULL,
+    paymentAmount 	numeric 		NOT NULL,
+    balance  		numeric 		NOT NULL,
     paymentType 	varchar(255) 	NOT NULL,
     paymentGroup 	varchar(255) 	NOT NULL,
     paymentDate 	date            NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    constraint u_constraint unique (balance, paymentDate)
     );
 
 CREATE TABLE filelog(
