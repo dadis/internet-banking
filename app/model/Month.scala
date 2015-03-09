@@ -19,8 +19,8 @@ case class Month(data: List[PayRecord]) {
   def toDbData = data.map(p => Seq[ParameterValue](p.paymentAmount, p.balance, p.paymentType, p.paymentGroup, p.paymentDate))
 
 
-  val month = data(0).paymentDate.getMonthOfYear
-  val year = data(0).paymentDate.getYear
+  val month = data.head.paymentDate.getMonthOfYear
+  val year = data.head.paymentDate.getYear
   val name = getMonthName
 
   val previousMonth = {
@@ -92,13 +92,40 @@ case class Month(data: List[PayRecord]) {
 }
 
 object Month {
-  def findAllForMonth(month: Double, year: Double): Month = {
+
+
+  def findDataForMonth(month: Integer, year: Integer): List[PayRecord] = {
     DB.withConnection {
       implicit c =>
-        val data = SQL("select paymentAmount,balance,paymentType,paymentGroup,paymentDate from("+
+        SQL("select paymentAmount,balance,paymentType,paymentGroup,paymentDate from("+
           "select *,extract(MONTH from paymentDate) as p_month, extract(YEAR from paymentDate) as p_year from payrecord"+
-          ")v where v.p_month=10 and v.p_year=2000").on("month" -> month, "year" -> year).as(PayRecord.mappingPayRecord *)
-        new Month(data)
+          ")v where v.p_month={month} and v.p_year={year}").on("month" -> month, "year" -> year).as(PayRecord.mappingPayRecord *)
+    }
+  }
+
+  def findLast: monthYear = {
+
+    DB.withConnection {
+      implicit c =>
+        val res = SQL("Select extract(MONTH from paymentDate)::bigint as p_month, extract(YEAR from paymentDate)::bigint as p_year from PayRecord ORDER by p_month,p_year Limit 1").as(monthYear *)
+
+        res.head
+
+    }
+
+  }
+
+  def checkMonth(m: monthYear):Boolean = {
+    DB.withConnection{
+      implicit c =>
+        val res = SQL("Select * from" +
+          "(select extract(MONTH from paymentDate)::bigint as p_month, extract(YEAR from paymentDate)::bigint as p_year from PayRecord)" +
+          "v WHERE v.p_month={month} and v.p_year={year} LIMIT 1").on("month" -> m._1, "year" -> m._2).as(monthYear *)     //TODO think about if it would not be better to use classes for month and year
+
+        res match{
+          case Nil => false
+          case _ => true
+        }
     }
   }
 
@@ -137,11 +164,11 @@ object Month {
     }
   }
 
-  type monthYear = (Double, Double)
+  type monthYear = (Int, Int)
 
   val monthYear = {
-    get[Double]("p_month") ~
-      get[Double]("p_year") map {
+    get[Int]("p_month") ~
+      get[Int]("p_year") map {
       case month ~ year =>
         (month, year)
     }
@@ -154,17 +181,7 @@ object Month {
     }
   }
 
-  def findLast: monthYear = {
-
-    DB.withConnection {
-      implicit c =>
-        val res = SQL("Select extract(MONTH from paymentDate) as p_month, extract(YEAR from paymentDate) as p_year from PayRecord ORDER by p_month,p_year Limit 1").as(monthYear *)
-
-    res.head
-
-    }
-
-  }
 }
+
 
 

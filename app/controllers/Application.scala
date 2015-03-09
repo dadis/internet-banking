@@ -32,41 +32,22 @@ object Application extends Controller {
 
   def seeMonth(month:Int,year:Int) = Action {
 
-    val m:Month = {
-      if (month == 0 && year == 0) {
+    val monthExist:Boolean = Month.checkMonth(month,year);
+
+    val data = {
+      if (!monthExist || (month == 0 && year == 0)) {
         val l =Month.findLast
-        Month.findAllForMonth(l._1, l._2)
+        Month.findDataForMonth(l._1.toInt, l._2.toInt)
       }
       else {
-        Month.findAllForMonth(month, year)
+        println("month:"+month)
+        println("year:"+year)
+        Month.findDataForMonth(month, year)
       }
     }
+    Ok(views.html.month(new Month(data)))
 
-    if(m.data.isEmpty) {
-      Redirect(routes.Application.index())
-    }
-    else {
-
-      println(m.previousMonth)
-      println(m.nextMonth)
-      Ok(views.html.month(m))
-    }
   }
-
-//  def seeLastMonth = Action {
-//
-//    val lastMonth = Month.findLast
-//
-//    val m = Month.findAllForMonth(lastMonth._1,lastMonth._2)
-//
-//    if(m.data.isEmpty) {
-//      Redirect(routes.Application.index())
-//    }
-//    else {
-//      Ok(views.html.month(m,m.previousMonth,m.nextMonth))
-//    }
-//  }
-
 
   def category = Action {
     Ok(views.html.void("a"))
